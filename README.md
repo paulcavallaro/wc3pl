@@ -41,7 +41,8 @@ each unit based on the instructions given to it.
 * `[` - If "value" at current location is zero jump past matching `]`
 * `]` - If "value" at current location is non-zero jump back to matchin `[`
 
-## Your Programming Language Is Bad And You Should Feel Bad
+### Your Programming Language Is Bad And You Should Feel Bad
 
 Yep you're right, but that's kind of the point. It's a turing tarpit.
+
 But with any luck we'll have a DotA port in no time.
