@@ -17,13 +17,18 @@ tokens :-
         <0>                     g                               { emit GATHER }
         <0>                     r                               { emit RETURN }
         <0>                     bf                              { emit BUILD_FARM }
-        <0>                     nn                              { emit BUILD_RAX }
-        <0>                     t                               { emit TRAIN_FOOTMAN }
+        <0>                     bb                              { emit BUILD_RAX }
+        <0>                     f                               { emit TRAIN_FOOTMAN }
         <0>                     x                               { emit DIE }
         <0>                     \[                              { emit JMPZ }
         <0>                     \]                              { emit JMPNZ }
+        <0>                     \+                              { emit INCR }
+        <0>                     \-                              { emit DECR }
+        <0>                     \o                              { emit PUTCHAR }
+        <0>                     \i                              { emit GETCHAR }
         <0>                     $white                          { skip }
         <0>                     \#                              { begin comment }
+        <0>                     .                               { unrecognized }
         <comment>               \n                              { begin 0 }
         <comment>               .                               { skip }
 
@@ -32,6 +37,9 @@ tokens :-
 emit :: Token -> (AlexPosn, Char, String) -> Int -> Alex Token
 emit token (_,_,input) len = do
   return token
+
+unrecognized :: (AlexPosn, Char, String) -> Int -> Alex Token
+unrecognized (_,_,input) len = alexError $ "Could not recognize token:" ++ (take len input)
 
 data Token = MOV_RIGHT
            | MOV_LEFT
@@ -48,6 +56,8 @@ data Token = MOV_RIGHT
            | DECR
            | JMPZ
            | JMPNZ
+           | PUTCHAR
+           | GETCHAR
            | EOF
            deriving (Eq, Show)
 
