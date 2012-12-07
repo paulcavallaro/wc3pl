@@ -43,7 +43,7 @@ each unit based on the instructions given to it.
 
 ### Maps
 
-Maps consist of a town hall (`t`), a gold mine (`g`), and one or more woods (`w`).
+Maps consist of a town hall (`h`), a gold mine (`g`), and one or more woods (`w`).
 You gather gold from the gold mine and lumber from the woods with a peasant,
 and return those resources back to your town hall.
 
