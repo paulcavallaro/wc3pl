@@ -2,10 +2,11 @@
 {-# LINE 1 "wc3pl.x" #-}
 
 module Main(main) where
-import Data.Array.MArray
-import Data.Array.IO
-import Data.Char
-import System.Environment
+import Data.Array.MArray (newArray, readArray, writeArray)
+import Data.Array.IO (IOArray)
+import Data.Char (chr)
+import System.Environment (getArgs)
+import WC3PL.Maps (WC3Map, getFeatures, buildMap)
 
 #if __GLASGOW_HASKELL__ >= 603
 #include "ghcconfig.h"
@@ -260,7 +261,7 @@ alex_deflt :: AlexAddr
 alex_deflt = AlexA# "\x27\x00\x2a\x00\xff\xff\xff\xff\xff\xff\x0a\x00\x0a\x00\xff\xff\x0c\x00\x0c\x00\x10\x00\x10\x00\x13\x00\x13\x00\x2a\x00\x2a\x00\x2a\x00\x27\x00\x27\x00\x27\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"#
 
 alex_accept = listArray (0::Int,42) [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[(AlexAcc (alex_action_0))],[(AlexAcc (alex_action_1))],[(AlexAcc (alex_action_2))],[(AlexAcc (alex_action_3))],[(AlexAcc (alex_action_4))],[(AlexAcc (alex_action_5))],[(AlexAcc (alex_action_6))],[(AlexAcc (alex_action_7))],[(AlexAcc (alex_action_8))],[(AlexAcc (alex_action_9))],[(AlexAcc (alex_action_10))],[(AlexAcc (alex_action_11))],[(AlexAcc (alex_action_12))],[(AlexAcc (alex_action_13))],[(AlexAcc (alex_action_14))],[(AlexAcc (alex_action_15))],[(AlexAcc (alex_action_16))],[(AlexAcc (alex_action_17))],[(AlexAcc (alex_action_18))],[(AlexAcc (alex_action_19))],[(AlexAcc (alex_action_19))],[(AlexAcc (alex_action_20))],[(AlexAcc (alex_action_21))]]
-{-# LINE 35 "wc3pl.x" #-}
+{-# LINE 36 "wc3pl.x" #-}
 
 
 emit :: Token -> (AlexPosn, Char, String) -> Int -> Alex Token
@@ -310,7 +311,7 @@ scanner str = runAlex str $ do
 main :: IO ()
 main = do
   args <- getArgs
-  map <- readFile $ head args
+  map <- readFile (head args) >>= buildMap
   instrs <- readFile $ (head . tail) args
   case (scanner instrs) of
     Left message -> print message

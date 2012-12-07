@@ -1,9 +1,10 @@
 {
 module Main(main) where
-import Data.Array.MArray
-import Data.Array.IO
-import Data.Char
-import System.Environment
+import Data.Array.MArray (newArray, readArray, writeArray)
+import Data.Array.IO (IOArray)
+import Data.Char (chr)
+import System.Environment (getArgs)
+import WC3PL.Maps (WC3Map, getFeatures, buildMap)
 }
 %wrapper "monadUserState"
 
@@ -81,7 +82,7 @@ scanner str = runAlex str $ do
 main :: IO ()
 main = do
   args <- getArgs
-  map <- readFile $ head args
+  map <- readFile (head args) >>= buildMap
   instrs <- readFile $ (head . tail) args
   case (scanner instrs) of
     Left message -> print message
