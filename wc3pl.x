@@ -9,18 +9,23 @@ import System.Environment
 
 tokens :-
 
-                                \>                              { emit MOV_RIGHT }
-                                \<                              { emit MOV_LEFT }
-                                \^                              { emit MOV_UP }
-                                v                               { emit MOV_DOWN }
-                                s                               { emit SPAWN }
-                                g                               { emit GATHER }
-                                r                               { emit RETURN }
-                                bf                              { emit BUILD_FARM }
-                                bb                              { emit BUILD_RAX }
-                                t                               { emit TRAIN_FOOTMAN }
-                                x                               { emit DIE }
-                                $white                          { skip }
+        <0>                     \>                              { emit MOV_RIGHT }
+        <0>                     \<                              { emit MOV_LEFT }
+        <0>                     \^                              { emit MOV_UP }
+        <0>                     v                               { emit MOV_DOWN }
+        <0>                     s                               { emit SPAWN }
+        <0>                     g                               { emit GATHER }
+        <0>                     r                               { emit RETURN }
+        <0>                     bf                              { emit BUILD_FARM }
+        <0>                     nn                              { emit BUILD_RAX }
+        <0>                     t                               { emit TRAIN_FOOTMAN }
+        <0>                     x                               { emit DIE }
+        <0>                     \[                              { emit JMPZ }
+        <0>                     \]                              { emit JMPNZ }
+        <0>                     $white                          { skip }
+        <0>                     \#                              { begin comment }
+        <comment>               \n                              { begin 0 }
+        <comment>               .                               { skip }
 
 {
 
@@ -39,8 +44,10 @@ data Token = MOV_RIGHT
            | GATHER
            | RETURN
            | DIE
-           | SEMAPHORE_UP
-           | SEMAPHORE_DOWN
+           | INCR
+           | DECR
+           | JMPZ
+           | JMPNZ
            | EOF
            deriving (Eq, Show)
 
