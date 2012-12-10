@@ -1,10 +1,9 @@
 {
 module Main(main) where
-import Data.Array.MArray (newArray, readArray, writeArray)
-import Data.Array.IO (IOArray)
 import Data.Char (chr)
 import System.Environment (getArgs)
-import WC3PL.Maps (WC3Map, getFeatures, buildMap)
+import WC3PL.Maps (buildMap)
+import WC3PL.Core (Token(..), interp)
 }
 %wrapper "monadUserState"
 
@@ -42,26 +41,6 @@ emit token (_,_,input) len = do
 unrecognized :: (AlexPosn, Char, String) -> Int -> Alex Token
 unrecognized (_,_,input) len = alexError $ "Could not recognize token:" ++ (take len input)
 
-data Token = MOV_RIGHT
-           | MOV_LEFT
-           | MOV_UP
-           | MOV_DOWN
-           | SPAWN
-           | BUILD_FARM
-           | BUILD_RAX
-           | TRAIN_FOOTMAN
-           | GATHER
-           | RETURN
-           | DIE
-           | INCR
-           | DECR
-           | JMPZ
-           | JMPNZ
-           | PUTCHAR
-           | GETCHAR
-           | EOF
-           deriving (Eq, Show)
-
 data AlexUserState = AlexUserState {
 }
 
@@ -86,6 +65,8 @@ main = do
   instrs <- readFile $ (head . tail) args
   case (scanner instrs) of
     Left message -> print message
-    Right tokens -> mapM_ print tokens
+    Right tokens -> interp map tokens
+
+
 
 }
