@@ -1,5 +1,7 @@
 module WC3PL.Maps (WC3Map,
              getFeatures,
+             viewMap,
+             printMap,
              buildMap) where
 import Data.Array.MArray (newListArray, readArray, writeArray)
 import Data.Array.IO (IOArray)
@@ -8,7 +10,7 @@ type Grid = IOArray Int [WC3Feature]
 type Location = (Int, Int)
 type Dimensions = (Int, Int)
 
-data WC3Map = WC3Map Dimensions Grid
+data WC3Map = WC3Map !Dimensions !Grid
 
 instance Show WC3Map where
   show (WC3Map (x,y) grid) = "WC3Map (" ++ show x ++ ", " ++ show y ++ ")"
@@ -19,15 +21,36 @@ data WC3Feature = Goldmine
                 | Barracks
                 | Peasant
                 | Footman
-                | Tile Int
-                  deriving Show
+                | Tile !Int
+
+instance Show WC3Feature where
+  show Goldmine = "g"
+  show Tree = "w"
+  show Townhall = "h"
+  show Barracks = "b"
+  show Peasant = "p"
+  show Footman = "f"
+  show (Tile 0) = "."
+  show (Tile i) = show i
 
 getFeatures :: WC3Map -> Location -> IO [WC3Feature]
-getFeatures map@(WC3Map _ grid) loc = readArray grid (translate map loc)
+getFeatures wc3map@(WC3Map _ grid) loc = readArray grid (translate wc3map loc)
 
 translate :: WC3Map -> Location -> Int
-translate (WC3Map (maxX,maxY) _) (x,y) | 1 <= x && x <= maxX && 1 <= y && y <= maxY = (maxX-1)*x + y
+translate (WC3Map (maxX,maxY) _) (x,y) | 1 <= x && x <= maxX && 1 <= y && y <= maxY = (x-1)*maxX + y
 translate (WC3Map (maxX,maxY) _) (x,y) | otherwise = error $ "Tried to dereference location: (" ++ (show x) ++ ", " ++ (show y) ++ ") in map with dimensions: (" ++ (show maxX) ++ ", " ++ (show maxY) ++ ")"
+
+viewMap :: WC3Map -> IO (String)
+viewMap wc3map@(WC3Map (x, y) grid) = do
+  features <- mapM (getFeatures wc3map) [(i,j) | i <- [1..x], j <- [1..y]]
+  let topFeatures = map (show . head) features
+  return $ snd $ foldl fuse (1, "") topFeatures
+  where
+    fuse (i, accum) s | i  == x = (1, accum ++ s ++ "\n")
+    fuse (i, accum) s = (i + 1, accum ++ s)
+
+printMap :: WC3Map -> IO ()
+printMap x = viewMap x >>= putStrLn
 
 buildMap :: String -> IO WC3Map
 buildMap inp = do
